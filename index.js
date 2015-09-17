@@ -7,6 +7,7 @@ var http = require('http'),
 
 module.exports = exports = function(options, cb) {
     //ensure all of the required parts have been passed
+    options.callbackUri = options.callbackUri || 'http://localhost:5678';
     options.port = options.port || 5678;
     options.accessType = options.accessType || 'online';
     if (!options.clientId) {
@@ -26,7 +27,7 @@ module.exports = exports = function(options, cb) {
     }
 
     //set up the auth client
-    var client = new OAuth2(options.clientId, options.clientSecret, 'http://localhost:' + options.port);
+    var client = new OAuth2(options.clientId, options.clientSecret, options.callbackUri);
 
     google.options({
         auth: client
