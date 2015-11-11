@@ -1,8 +1,8 @@
 Log into a Google account using OAuth2 without a browser.
 
-##Prerequisites
+## Prerequisites
 
-###Google Client ID and Secret
+### Google Client ID and Secret
 
 1. Head to the [Google Developers Console](https://console.developers.google.com).
 1. Create a new project.  Be sure to name it something informative.
@@ -16,15 +16,15 @@ Log into a Google account using OAuth2 without a browser.
 
 Once done, you should see a popover that has the client ID and client secret.  If you need to get to it again, you can click on the name selected in step 7.
 
-###CasperJS
+### CasperJS
 
 Casper is a utility toolset for PhantomJS.  Installation instructions can be found in the [Casper documentation](http://docs.casperjs.org/en/latest/installation.html).  You will need to ensure that PhantomJS (>=1.8.2) and Python (>=2.6) are installed first.
 
-##Installation
+## Installation
 
 Use `npm`: `npm install headless-google-auth`
 
-##Options
+## Options
 
 The exposed method takes an options hash:
 
@@ -39,7 +39,7 @@ The exposed method takes an options hash:
 
 The callback gives the set up Google client if needed.
 
-##Usage
+## Usage
 
 If you wanted to get a list of GMail messages (albeit only their IDs and thread IDs), for example:
 
@@ -64,7 +64,7 @@ headlessAuth({
 });
 ```
 
-##Further information
+## Further information
 
 Take a look at the [Google NodeJS API Client](https://github.com/google/google-api-nodejs-client) for more information about scopes, authorization schemes, and other API information.
 
