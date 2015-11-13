@@ -1,59 +1,52 @@
-var casper = require('casper')
-    .create(),
-    util = require('utils');
+var Nightmare = require('nightmare'),
+    vo = require('vo');
 
-//args:[
-//username,
-//password,
-//auth link
-//]
-
-casper.userAgent('Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5');
-casper.start(casper.cli.args[2], function() {
-    casper.waitForSelector('input[name="Email"]', function() {
-        this.sendKeys('input[name="Email"]', casper.cli.args[0]);
-    });
-});
-
-casper.then(function() {
-    casper.mouseEvent('click', 'input#next');
-});
-
-casper.then(function() {
-    casper.waitForSelector('div#identifier-captcha', function() {
-        if (this.exists('div#identifier-captcha') && this.visible('div#identifier-captcha')) {
-            casper.die('Catpcha monster got you.  You will have to go log in by hand to clear the captcha up.');
-        }
-    });
-});
-
-
-casper.then(function() {
-    casper.waitForSelector('input#Passwd', function() {
-        this.sendKeys('input#Passwd', casper.cli.args[1]);
-        this.mouseEvent('click', 'input#signIn');
-    });
-});
-
-casper.then(function() {
-    if (this.exists('span[role="alert"]') && this.visible('span[role="alert"]')) {
-        this.capture(fname());
-        casper.die('Password entered did not work.');
-    }
-});
-casper.then(function() {
-    //hack: wait for the approve access button to be available
-    casper.waitForSelector('button#submit_approve_access', function() {
-        casper.wait(3000, function() {
-            casper.click('button#submit_approve_access');
+var run = function*() {
+    var nightmare = Nightmare();
+    var captcha = yield nightmare
+        .useragent('Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5')
+        .goto(options.url)
+        .wait('input[name="Email"]')
+        .type('input[name="Email"]', options.email)
+        .click('input#next')
+        .wait('div#identifier-captcha')
+        .evaluate(function(){
+            return document.querySelector('div#identifier-captcha').visible();
         });
-    });
-});
 
-casper.then(function() {
-    casper.waitForSelector('div#complete', function() {
-        casper.exit();
-    });
-});
+    if(captcha){
+        //todo: pull captcha down
+        //todo: display captcha?
+        //todo: prompt captcha?
+        //for now throw exception
+        throw new Error('hit by the captcha monster');
+    }
+ 
+    //can you just pick up where you left off like this?
+    var loginFail = yield nightmare
+        .wait('input#Passwd')
+        .type('input#Passwd', options.password)
+        .click('input#signIn')A
+        .evaluate(function(){
+            var alert = document.querySelector('span[role="alert"]');
+            return !!alert && alert.visible();
+        });
 
-casper.run();
+    if(loginFail){
+        throw new Error('login failed: bad password');
+        return;
+    }
+
+    yield nightmare
+        .wait('button#submit_approve_access')
+        .wait(3000)
+        .click('button#submit_approve_access')
+        .wait('div#complete')
+        .end();
+};
+
+module.exports = exports = function(options, cb){
+   vo(run)(options, function(err){
+       cb(err);
+   });
+};
