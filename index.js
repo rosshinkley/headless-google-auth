@@ -1,7 +1,6 @@
 var http = require('http'),
     google = require('googleapis'),
-    spawn = require('child_process')
-    .spawn,
+    login = require('./login'),
     path = require('path'),
     OAuth2 = google.auth.OAuth2;
 
@@ -56,25 +55,19 @@ module.exports = exports = function(options, cb) {
             }
 
             //create auth url
-            var url = client.generateAuthUrl({
+            options.url = client.generateAuthUrl({
                 scope: options.scopes,
                 access_type: options.accessType
             });
 
-            //shell out to casper to execute google auth login
-            var child = spawn('casperjs', [path.resolve(__dirname, 'login.js'), options.username, options.password, url]);
-            child.stdout.setEncoding('utf8');
-            var diemsg = '';
-            child.stderr.on('data', function(data) {
-                diemsg += data;
-            });
-
-            child.on('close', function(code) {
-                if (!!code) {
-                    //code is nonzero, kill the server, call back with the error
-                    server.close();
-                    return cb(diemsg);
+            login(options, function(err) {
+                //if there is an error from login, call back with that
+                if (err) {
+                    server.close(function() {
+                        return cb(err);
+                    });
                 }
+                //otherwise, wait for the propped up dummy server to get called and for the auth token process to complete
             });
         });
 };
