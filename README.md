@@ -1,4 +1,4 @@
-Log into a Google account using Google's official library without a browser.
+Log into a Google account, setting up Google's official library without a browser.
 
 ## Prerequisites
 
@@ -16,9 +16,11 @@ Log into a Google account using Google's official library without a browser.
 
 Once done, you should see a popover that has the client ID and client secret.  If you need to get to it again, you can click on the name selected in step 7.
 
-### CasperJS
+### NightmareJS
 
-Casper is a utility toolset for PhantomJS.  Installation instructions can be found in the [Casper documentation](http://docs.casperjs.org/en/latest/installation.html).  You will need to ensure that PhantomJS (>=1.8.2) and Python (>=2.6) are installed first.
+[Nightmare](https://github.com/segmentio/nightmare) is a browser automation toolkit based on [Electron](https://github.com/atom/electron).  Unlike v0.1.x which used [Casper](https://github.com/n1k0/casperjs) and consequently required several special setup steps, Nightmare is installable and usable via NPM.  For most cases, it will Just Work (tm) out of the box.
+
+However, Electron requires a video buffer to be available.  If you are using this library on a headless system (eg, a server with no X client,  a Docker instance, or a chroot under Crouton), you will need to use a virtual framebuffer to get this library working.  More information about this [can be found in the Nightmare repository's issues.](https://github.com/segmentio/nightmare/issues/224)
 
 ## Installation
 
@@ -30,22 +32,25 @@ The exposed method takes an options hash:
 
 * **clientId** - the client ID obtained from the Google Developers Console.
 * **clientSecret** - the client secret obtained from the Google Developers Console.
-* **username** - the email address to log into.
+* **email** - the email address to log into.
 * **password** - the password for the account.
 * **scopes** - scopes to request for the logging in user.  Note that anything specified here is automatically granted.
 * **port** - (optional) the port the ad hoc NodeJS server that gets propped up for the Google callback listens on.  Defaults to `5678`.
 * **callbackUri** - (optional) the fully-qualified port-inclusive URI the Google login is going to call back to. Defaults to `http://localhost:5678`.
 * **accessType** - (optional) the kind of access to get, defaults to "online".  ("offline" will get a refresh token.)
 
-The callback gives the set up Google client if needed.
+The callback (or promise resolution) passes up the newly set up Google client and the tokens used to create that client.
 
 ## Usage
 
+### Callbacks
+
 If you wanted to get a list of GMail messages (albeit only their IDs and thread IDs), for example:
 
-```
+```javascript
 var headlessAuth = require('headless-google-auth'),
     gmail = require('googleapis').gmail('v1');
+
 headlessAuth({
     clientId: '[client ID from developer's console]',
     clientSecret: '[client secret from developer's console]',
@@ -54,7 +59,37 @@ headlessAuth({
     scopes:[
         'https://www.googleapis.com/auth/gmail.readonly',
     ]
-}, function(err, client){
+}, function(err, client, tokens){
+    gmail.users.messages.list({
+        userId: 'testemail@gmail.com'
+        }, function(err, messages){
+            //will print out an array of messages plus the next page token
+            console.dir(messages);
+        });
+});
+```
+
+### Promises
+
+If you wanted tog et  list of GMail messages like above, but wanted to use promises instead:
+
+```javascript
+var headlessAuth = require('headless-google-auth'),
+    gmail = require('googleapis').gmail('v1');
+
+var authPromise = headlessAuth({
+    clientId: '[client ID from developer's console]',
+    clientSecret: '[client secret from developer's console]',
+    username: 'testemail@gmail.com',
+    password: 'MySuperSecretPassword',
+    scopes:[
+        'https://www.googleapis.com/auth/gmail.readonly',
+    ]
+});
+
+//... other code if needed...
+
+authPromise.then(function(client, tokens){
     gmail.users.messages.list({
         userId: 'testemail@gmail.com'
         }, function(err, messages){
@@ -68,7 +103,7 @@ headlessAuth({
 
 Take a look at the [Google NodeJS API Client](https://github.com/google/google-api-nodejs-client) for more information about scopes, authorization schemes, and other API information.
 
-The [Casper API documentation](http://docs.casperjs.org/en/latest/modules/index.html) is also an excellent resource.
+The [Nightmare API documentation](https://github.com/segmentio/nightmare#api) is also an excellent resource.
 
 There are also other libraries that accomplish something similar to this one.  Highlighting the differences:
 

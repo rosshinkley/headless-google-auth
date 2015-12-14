@@ -51,7 +51,7 @@ module.exports = exports = function(options, cb) {
             if (err || closeErr) {
               return reject(err || closeErr);
             }
-            resolve(tokens);
+            resolve(client, tokens);
           });
         });
       })
