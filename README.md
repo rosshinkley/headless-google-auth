@@ -1,4 +1,4 @@
-Log into a Google account using OAuth2 without a browser.
+Log into a Google account using Google's official library without a browser.
 
 ## Prerequisites
 
