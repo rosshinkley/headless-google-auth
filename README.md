@@ -5,16 +5,16 @@ Log into a Google account, setting up Google's official library without a browse
 ### Google Client ID and Secret
 
 1. Head to the [Google Developers Console](https://console.developers.google.com).
-1. Create a new project.  Be sure to name it something informative.
-1. Navigate to the newly-minted project by clicking on the project name.
-1. On the left-hand side, navigate to "APIs & Auth" > "Credentials".
-1. Click on "Add Credentials", then select "OAuth 2.0 client ID".
-1. Select "Web Application".
-1. Enter in a name.  Again, be sure to name it something informative.
+1. On the dashboard, click on "Use Google APIs".
+1. On the lefthand pane, click on "Credentials".
+1. Click the dropdown labelled "New credentials".  Select "OAuth Client ID".
+1. Click "Web Application".  (This will show additional options.)
+1. Enter in a name.  Be sure to name it something informative.
 1. Leave the "Authorized JavaScript Origins" blank for the time being.
 1. Add `http://localhost:5678` as an authorized redirect URI.  If you change the callback URI or port in the options (see below), make sure the new URI is added or the existing URI is altered to match.
+1. Review entries and click "Create" when finished.
 
-Once done, you should see a popover that has the client ID and client secret.  If you need to get to it again, you can click on the name selected in step 7.
+Once done, you should see a popover that has the client ID and client secret.  If you need to get to it again, you can click on the name selected in step 6.
 
 ### NightmareJS
 
