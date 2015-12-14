@@ -15,8 +15,8 @@ module.exports = exports = function(options, cb) {
     if (!options.clientSecret) {
         return cb('No Google client secret specified.');
     }
-    if (!options.username) {
-        return cb('No Google username specified.');
+    if (!options.email) {
+        return cb('No email specified.');
     }
     if (!options.password) {
         return cb('No Google password specified.');
