@@ -1,6 +1,6 @@
 {
   "name": "headless-google-auth",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Log into a Google account using OAuth2 without a browser",
   "main": "index.js",
   "dependencies": {
