@@ -54,7 +54,7 @@ var headlessAuth = require('headless-google-auth'),
 headlessAuth({
     clientId: '[client ID from developer's console]',
     clientSecret: '[client secret from developer's console]',
-    username: 'testemail@gmail.com',
+    email: 'testemail@gmail.com',
     password: 'MySuperSecretPassword',
     scopes:[
         'https://www.googleapis.com/auth/gmail.readonly',
@@ -80,7 +80,7 @@ var headlessAuth = require('headless-google-auth'),
 var authPromise = headlessAuth({
     clientId: '[client ID from developer's console]',
     clientSecret: '[client secret from developer's console]',
-    username: 'testemail@gmail.com',
+    email: 'testemail@gmail.com',
     password: 'MySuperSecretPassword',
     scopes:[
         'https://www.googleapis.com/auth/gmail.readonly',
